@@ -15,6 +15,7 @@ Build and maintain this repository as a practical launcher for developer tooling
 3. Favor secure defaults over convenience.
 4. Update `README.md`, `AGENTS.md`, and `SKILL.md` together when workflow changes.
 5. Prefer small, reviewable commits with clear file-level intent.
+6. When documenting output/workspace navigation, include Windows and Linux examples using `<repo_root>` placeholders (no hard-coded usernames).
 
 ## First Task
 

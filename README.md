@@ -57,3 +57,16 @@ Or run interactive menu (Git Bash/WSL shell):
 - Docker Desktop must already be installed and running.
 - The gateway defaults to `127.0.0.1:18789`.
 - For live logs, use `docker compose -f openClaw\docker-compose.yml --env-file openClaw\.env logs -f openclaw`.
+
+## Host Paths (Windows + Linux)
+
+Use `<repo_root>` as the folder where this repository is cloned (dynamic per machine/user).
+
+- Windows workspace/output: `<repo_root>\openClaw\workspace`
+- Windows config + logs: `<repo_root>\openClaw\config`
+- Linux workspace/output: `<repo_root>/openClaw/workspace`
+- Linux config + logs: `<repo_root>/openClaw/config`
+
+Container path for Pinokio runtime data is fixed and user-independent:
+
+- `pinokio_data:/pinokio-data`

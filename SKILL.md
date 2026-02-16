@@ -10,6 +10,7 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 1. Update `README.md` when startup commands or structure changes.
 2. Update `AGENTS.md` when execution rules or safety expectations change.
 3. Keep this file focused on reusable, procedural guidance.
+4. When docs reference output/workspace folders, include Windows and Linux examples using `<repo_root>` placeholders (no hard-coded usernames).
 
 ## Setup Script Standards
 
