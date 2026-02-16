@@ -3,15 +3,25 @@ services:
     image: ${OPENCLAW_IMAGE}
     container_name: openclaw
     restart: unless-stopped
+    command:
+      - node
+      - /app/openclaw.mjs
+      - gateway
+      - --allow-unconfigured
+      - --bind
+      - ${OPENCLAW_GATEWAY_BIND}
+      - --port
+      - ${OPENCLAW_GATEWAY_PORT}
     env_file:
       - .env
     environment:
+      - OPENCLAW_HOST_BIND=${OPENCLAW_HOST_BIND}
       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
     ports:
-      - "${OPENCLAW_GATEWAY_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
+      - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
     volumes:
       - ./config:/app/config
       - ./workspace:/workspace

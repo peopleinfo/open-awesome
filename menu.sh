@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OPENCLAW_SETUP_BAT="${ROOT_DIR}/openClaw/setup-sandbox.bat"
+OPENCLAW_OAUTH_BAT="${ROOT_DIR}/openClaw/apply-openai-oauth.bat"
 
 to_windows_path() {
   local path="$1"
@@ -22,6 +23,13 @@ pause() {
 }
 
 install_docker_desktop() {
+  if command -v docker >/dev/null 2>&1; then
+    if docker --version >/dev/null 2>&1; then
+      echo "Docker is already installed. Skipping install/update."
+      return 0
+    fi
+  fi
+
   if ! command -v powershell.exe >/dev/null 2>&1; then
     echo "Error: powershell.exe is required on Windows."
     return 1
@@ -50,6 +58,24 @@ run_openclaw_setup() {
   echo "OpenClaw setup finished."
 }
 
+apply_openai_oauth() {
+  if [[ ! -f "${OPENCLAW_OAUTH_BAT}" ]]; then
+    echo "Error: ${OPENCLAW_OAUTH_BAT} not found."
+    return 1
+  fi
+  if ! command -v powershell.exe >/dev/null 2>&1; then
+    echo "Error: powershell.exe is required on Windows."
+    return 1
+  fi
+
+  local oauth_win
+  oauth_win="$(to_windows_path "${OPENCLAW_OAUTH_BAT}")"
+
+  echo "Launching OpenAI OAuth apply script..."
+  powershell.exe -NoProfile -Command "Start-Process -Wait -FilePath '${oauth_win}'"
+  echo "OpenAI OAuth apply script finished."
+}
+
 show_status() {
   echo
   echo "Docker version:"
@@ -74,17 +100,56 @@ print_menu() {
 ========================================
 Open Awesome Installer Menu
 ========================================
+1) Install Docker Desktop (optional)
+   - Skips automatically if Docker is already installed.
+2) Setup OpenClaw sandbox
+   - Runs openClaw/setup-sandbox.bat with admin prompt.
+3) Apply OpenAI OAuth (Codex)
+   - Reuses local Codex auth and imports into OpenClaw.
+4) Check install status
+   - Shows Docker and OpenClaw file status.
+5) Help (full option details)
+6) Exit
+EOF
+}
+
+print_help() {
+  cat <<'EOF'
+
+Menu Details
+------------
 1) Install Docker Desktop
-2) Install/OpenClaw setup sandbox
-3) Check install status
-4) Exit
+   Run:
+   winget install -e --id Docker.DockerDesktop
+
+2) Setup OpenClaw sandbox
+   Run:
+   openClaw/setup-sandbox.bat
+   This creates .env, compose file, and starts container.
+
+3) Apply OpenAI OAuth (Codex)
+   Run:
+   openClaw/apply-openai-oauth.bat
+   This imports ~/.codex/auth.json into OpenClaw auth-profiles.
+
+4) Check install status
+   Run:
+   docker --version
+   docker compose version
+   and verify openClaw/setup-sandbox.bat exists.
+
+5) Help
+   Show this detailed explanation.
+
+6) Exit
+   Close this menu.
 EOF
 }
 
 main() {
   while true; do
     print_menu
-    read -r -p "Pick an option [1-4]: " choice
+    read -r -p "Pick an option [1-6]: " choice
     case "${choice}" in
       1)
         install_docker_desktop || true
@@ -95,10 +160,18 @@ main() {
         pause
         ;;
       3)
-        show_status
+        apply_openai_oauth || true
         pause
         ;;
       4)
+        show_status
+        pause
+        ;;
+      5)
+        print_help
+        pause
+        ;;
+      6)
         echo "Bye."
         exit 0
         ;;

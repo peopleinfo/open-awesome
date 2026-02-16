@@ -13,6 +13,7 @@ set "SCRIPT_DIR=%~dp0"
 if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "ENV_FILE=%SCRIPT_DIR%\.env"
 set "COMPOSE_FILE=%SCRIPT_DIR%\docker-compose.yml"
+set "DEFAULT_OPENCLAW_IMAGE=ghcr.io/openclaw/openclaw:latest"
 
 REM Check if running as Administrator
 net session >nul 2>&1
@@ -76,14 +77,70 @@ if exist "%ENV_FILE%" (
     for /f %%G in ('powershell -NoProfile -Command "[guid]::NewGuid().ToString().Replace(\"-\",\"\")"') do set "GOG_KEYRING_PASSWORD=%%G"
 
     (
-        echo OPENCLAW_IMAGE=openclaw:latest
-        echo OPENCLAW_GATEWAY_BIND=127.0.0.1
+        echo OPENCLAW_IMAGE=%DEFAULT_OPENCLAW_IMAGE%
+        echo OPENCLAW_HOST_BIND=127.0.0.1
+        echo OPENCLAW_GATEWAY_BIND=lan
         echo OPENCLAW_GATEWAY_PORT=18789
         echo OPENCLAW_GATEWAY_TOKEN=!OPENCLAW_TOKEN!
         echo GOG_KEYRING_PASSWORD=!GOG_KEYRING_PASSWORD!
     ) > "%ENV_FILE%"
 
     echo [OK] .env created
+)
+echo.
+
+set "OPENCLAW_IMAGE_VALUE="
+set "OPENCLAW_HOST_BIND_VALUE="
+set "OPENCLAW_GATEWAY_BIND_VALUE="
+for /f "usebackq tokens=1,* delims==" %%A in ("%ENV_FILE%") do (
+    if /I "%%A"=="OPENCLAW_IMAGE" set "OPENCLAW_IMAGE_VALUE=%%B"
+    if /I "%%A"=="OPENCLAW_HOST_BIND" set "OPENCLAW_HOST_BIND_VALUE=%%B"
+    if /I "%%A"=="OPENCLAW_GATEWAY_BIND" set "OPENCLAW_GATEWAY_BIND_VALUE=%%B"
+)
+
+if /I "!OPENCLAW_IMAGE_VALUE!"=="openclaw:latest" (
+    echo [*] Detected legacy image value "openclaw:latest". Migrating to "%DEFAULT_OPENCLAW_IMAGE%"...
+    powershell -NoProfile -Command "(Get-Content -Raw '%ENV_FILE%') -replace '(?m)^OPENCLAW_IMAGE=.*$','OPENCLAW_IMAGE=%DEFAULT_OPENCLAW_IMAGE%' | Set-Content '%ENV_FILE%'"
+    if !errorLevel! neq 0 (
+        echo ERROR: Failed to update OPENCLAW_IMAGE in .env
+        pause
+        exit /b 1
+    )
+    echo [OK] OPENCLAW_IMAGE updated
+)
+echo.
+
+if "!OPENCLAW_HOST_BIND_VALUE!"=="" (
+    echo [*] OPENCLAW_HOST_BIND not found. Setting host bind to 127.0.0.1...
+    powershell -NoProfile -Command "Add-Content -Path '%ENV_FILE%' -Value 'OPENCLAW_HOST_BIND=127.0.0.1'"
+    if !errorLevel! neq 0 (
+        echo ERROR: Failed to add OPENCLAW_HOST_BIND to .env
+        pause
+        exit /b 1
+    )
+    echo [OK] OPENCLAW_HOST_BIND added
+)
+
+if /I "!OPENCLAW_GATEWAY_BIND_VALUE!"=="127.0.0.1" (
+    echo [*] Detected legacy OPENCLAW_GATEWAY_BIND=127.0.0.1. Migrating to bind mode "lan"...
+    powershell -NoProfile -Command "(Get-Content -Raw '%ENV_FILE%') -replace '(?m)^OPENCLAW_GATEWAY_BIND=.*$','OPENCLAW_GATEWAY_BIND=lan' | Set-Content '%ENV_FILE%'"
+    if !errorLevel! neq 0 (
+        echo ERROR: Failed to migrate OPENCLAW_GATEWAY_BIND in .env
+        pause
+        exit /b 1
+    )
+    echo [OK] OPENCLAW_GATEWAY_BIND migrated
+)
+
+if /I "!OPENCLAW_GATEWAY_BIND_VALUE!"=="0.0.0.0" (
+    echo [*] Detected legacy OPENCLAW_GATEWAY_BIND=0.0.0.0. Migrating to bind mode "lan"...
+    powershell -NoProfile -Command "(Get-Content -Raw '%ENV_FILE%') -replace '(?m)^OPENCLAW_GATEWAY_BIND=.*$','OPENCLAW_GATEWAY_BIND=lan' | Set-Content '%ENV_FILE%'"
+    if !errorLevel! neq 0 (
+        echo ERROR: Failed to migrate OPENCLAW_GATEWAY_BIND in .env
+        pause
+        exit /b 1
+    )
+    echo [OK] OPENCLAW_GATEWAY_BIND migrated
 )
 echo.
 
@@ -101,12 +158,13 @@ if exist "%COMPOSE_FILE%" (
         echo     env_file:
         echo       - .env
         echo     environment:
+        echo       - OPENCLAW_HOST_BIND=${OPENCLAW_HOST_BIND}
         echo       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
         echo       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
         echo       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
         echo       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
         echo     ports:
-        echo       - "${OPENCLAW_GATEWAY_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
+        echo       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
         echo     volumes:
         echo       - ./config:/app/config
         echo       - ./workspace:/workspace
@@ -120,7 +178,9 @@ pushd "%SCRIPT_DIR%"
 echo [*] Pulling latest image...
 docker compose pull
 if %errorLevel% neq 0 (
-    echo ERROR: Failed to pull image. Check internet and image name in .env.
+    echo ERROR: Failed to pull image.
+    echo Check network, Docker login state, and OPENCLAW_IMAGE value in .env.
+    echo Suggested image: %DEFAULT_OPENCLAW_IMAGE%
     popd
     pause
     exit /b 1
