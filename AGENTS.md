@@ -27,8 +27,20 @@ Expected outcomes:
 1. Verify Docker and Docker Compose are available.
 2. Create required local directories.
 3. Generate a secure `.env` file when missing.
-4. Create `openClaw/docker-compose.yml` when missing.
-5. Pull and start OpenClaw in detached mode.
+4. Generate `openClaw/config/openclaw.json` when missing for local Control UI auth.
+5. Create `openClaw/docker-compose.yml` when missing (and migrate legacy volume mounts when detected).
+6. Pull and start OpenClaw in detached mode.
+
+## Optional Channel Task
+
+- `openClaw/config-telegram.bat`
+
+Expected outcomes:
+
+1. Accept Telegram bot token via prompt/arg/env.
+2. Configure Telegram channel on running OpenClaw container.
+3. Set local DM access defaults (`allowFrom=["*"]`, `dmPolicy=allowlist`) to avoid unauthorized command responses.
+4. Keep token only in gitignored local config.
 
 ## Definition Of Done
 

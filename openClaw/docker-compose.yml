@@ -8,6 +8,10 @@ services:
       - /app/openclaw.mjs
       - gateway
       - --allow-unconfigured
+      - --auth
+      - token
+      - --token
+      - ${OPENCLAW_GATEWAY_TOKEN}
       - --bind
       - ${OPENCLAW_GATEWAY_BIND}
       - --port
@@ -15,6 +19,7 @@ services:
     env_file:
       - .env
     environment:
+      - HOME=/home/node
       - OPENCLAW_HOST_BIND=${OPENCLAW_HOST_BIND}
       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
@@ -23,5 +28,5 @@ services:
     ports:
       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
     volumes:
-      - ./config:/app/config
-      - ./workspace:/workspace
+      - ./config:/home/node/.openclaw
+      - ./workspace:/home/node/.openclaw/workspace

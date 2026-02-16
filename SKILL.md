@@ -22,10 +22,13 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 
 1. Keep gateway bind at `127.0.0.1`.
 2. Keep default gateway port at `18789`.
-3. Keep workspace and config paths stable for repeatable local runs.
+3. Keep Docker volume paths stable: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
+4. Ensure `openClaw/config/openclaw.json` exists with local Control UI token auth enabled for localhost workflows.
+5. For Telegram quick-start, default DM auth should allow local testing (`allowFrom=["*"]`, `dmPolicy=allowlist`).
 
 ## Verification
 
 1. Run setup scripts after edits when possible.
 2. Confirm containers are running with Docker Compose status commands.
 3. Document any manual prerequisites in `README.md`.
+4. For channel helpers (for example Telegram), validate via `openclaw channels list` and `openclaw channels status --probe`.

@@ -13,6 +13,7 @@ set "SCRIPT_DIR=%~dp0"
 if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "ENV_FILE=%SCRIPT_DIR%\.env"
 set "COMPOSE_FILE=%SCRIPT_DIR%\docker-compose.yml"
+set "CONFIG_FILE=%SCRIPT_DIR%\config\openclaw.json"
 set "DEFAULT_OPENCLAW_IMAGE=ghcr.io/openclaw/openclaw:latest"
 
 REM Check if running as Administrator
@@ -66,6 +67,24 @@ if not exist "%USERPROFILE%\.openclaw\workspace" mkdir "%USERPROFILE%\.openclaw\
 if not exist "%SCRIPT_DIR%\config" mkdir "%SCRIPT_DIR%\config"
 if not exist "%SCRIPT_DIR%\workspace" mkdir "%SCRIPT_DIR%\workspace"
 echo [OK] Directories created
+echo.
+
+if exist "%CONFIG_FILE%" (
+    echo [*] Existing openclaw.json found. Keeping current values.
+) else (
+    echo [*] Creating openclaw.json for local Control UI token auth...
+    (
+        echo {
+        echo   "gateway": {
+        echo     "mode": "local",
+        echo     "controlUi": {
+        echo       "allowInsecureAuth": true
+        echo     }
+        echo   }
+        echo }
+    ) > "%CONFIG_FILE%"
+    echo [OK] openclaw.json created
+)
 echo.
 
 REM Create .env file with security defaults if missing
@@ -144,32 +163,28 @@ if /I "!OPENCLAW_GATEWAY_BIND_VALUE!"=="0.0.0.0" (
 )
 echo.
 
-REM Create compose file when missing
+set "REWRITE_COMPOSE="
 if exist "%COMPOSE_FILE%" (
-    echo [*] Existing docker-compose.yml found. Keeping current file.
+    findstr /C:"./config:/app/config" "%COMPOSE_FILE%" >nul 2>&1 && set "REWRITE_COMPOSE=1"
+    findstr /C:"./workspace:/workspace" "%COMPOSE_FILE%" >nul 2>&1 && set "REWRITE_COMPOSE=1"
+    if defined REWRITE_COMPOSE (
+        echo [*] Detected legacy docker-compose.yml. Migrating volume mounts and auth args...
+    ) else (
+        echo [*] Existing docker-compose.yml found. Keeping current file.
+    )
 ) else (
+    set "REWRITE_COMPOSE=1"
     echo [*] Creating docker-compose.yml...
-    (
-        echo services:
-        echo   openclaw:
-        echo     image: ${OPENCLAW_IMAGE}
-        echo     container_name: openclaw
-        echo     restart: unless-stopped
-        echo     env_file:
-        echo       - .env
-        echo     environment:
-        echo       - OPENCLAW_HOST_BIND=${OPENCLAW_HOST_BIND}
-        echo       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
-        echo       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
-        echo       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
-        echo       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
-        echo     ports:
-        echo       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
-        echo     volumes:
-        echo       - ./config:/app/config
-        echo       - ./workspace:/workspace
-    ) > "%COMPOSE_FILE%"
-    echo [OK] docker-compose.yml created
+)
+
+if defined REWRITE_COMPOSE (
+    call :write_compose
+    if !errorLevel! neq 0 (
+        echo ERROR: Failed to write docker-compose.yml
+        pause
+        exit /b 1
+    )
+    echo [OK] docker-compose.yml written
 )
 echo.
 
@@ -205,6 +220,44 @@ echo.
 echo Next steps:
 echo 1. Open .env and rotate tokens if needed.
 echo 2. Use "docker compose -f openClaw\docker-compose.yml logs -f" to watch startup logs.
+echo 3. Run openClaw\run.bat for normal startup.
 echo.
 pause
 exit /b 0
+
+:write_compose
+(
+    echo services:
+    echo   openclaw:
+    echo     image: ${OPENCLAW_IMAGE}
+    echo     container_name: openclaw
+    echo     restart: unless-stopped
+    echo     command:
+    echo       - node
+    echo       - /app/openclaw.mjs
+    echo       - gateway
+    echo       - --allow-unconfigured
+    echo       - --auth
+    echo       - token
+    echo       - --token
+    echo       - ${OPENCLAW_GATEWAY_TOKEN}
+    echo       - --bind
+    echo       - ${OPENCLAW_GATEWAY_BIND}
+    echo       - --port
+    echo       - ${OPENCLAW_GATEWAY_PORT}
+    echo     env_file:
+    echo       - .env
+    echo     environment:
+    echo       - HOME=/home/node
+    echo       - OPENCLAW_HOST_BIND=${OPENCLAW_HOST_BIND}
+    echo       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
+    echo       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
+    echo       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+    echo       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+    echo     ports:
+    echo       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
+    echo     volumes:
+    echo       - ./config:/home/node/.openclaw
+    echo       - ./workspace:/home/node/.openclaw/workspace
+) > "%COMPOSE_FILE%"
+exit /b %errorLevel%

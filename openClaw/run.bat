@@ -7,6 +7,9 @@ set "SCRIPT_DIR=%~dp0"
 if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "ENV_FILE=%SCRIPT_DIR%\.env"
 set "COMPOSE_FILE=%SCRIPT_DIR%\docker-compose.yml"
+set "CONFIG_DIR=%SCRIPT_DIR%\config"
+set "WORKSPACE_DIR=%SCRIPT_DIR%\workspace"
+set "OPENCLAW_CONFIG_FILE=%CONFIG_DIR%\openclaw.json"
 set "OPENCLAW_GATEWAY_TOKEN_VALUE="
 
 echo.
@@ -27,6 +30,23 @@ if not exist "%COMPOSE_FILE%" (
     echo Run setup-sandbox.bat first.
     pause
     exit /b 1
+)
+
+if not exist "%CONFIG_DIR%" mkdir "%CONFIG_DIR%"
+if not exist "%WORKSPACE_DIR%" mkdir "%WORKSPACE_DIR%"
+
+if not exist "%OPENCLAW_CONFIG_FILE%" (
+    echo [*] Creating %OPENCLAW_CONFIG_FILE% for local Control UI auth...
+    (
+        echo {
+        echo   "gateway": {
+        echo     "mode": "local",
+        echo     "controlUi": {
+        echo       "allowInsecureAuth": true
+        echo     }
+        echo   }
+        echo }
+    ) > "%OPENCLAW_CONFIG_FILE%"
 )
 
 docker --version >nul 2>&1
@@ -75,7 +95,7 @@ echo [OK] OpenClaw is started (if image pull/start succeeded).
 echo Gateway: http://127.0.0.1:18789
 if not "%OPENCLAW_GATEWAY_TOKEN_VALUE%"=="" (
     echo Dashboard with token: http://127.0.0.1:18789/#token=%OPENCLAW_GATEWAY_TOKEN_VALUE%
-    echo If UI says unauthorized, open the tokenized URL above.
+    echo If UI says "pairing required", run setup-sandbox.bat once to migrate legacy config mounts.
 ) else (
     echo WARNING: OPENCLAW_GATEWAY_TOKEN not found in .env
     echo Generate token with setup-sandbox.bat or openclaw doctor --generate-gateway-token
