@@ -27,6 +27,11 @@ services:
       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
     ports:
       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
+      - "${OPENCLAW_HOST_BIND}:42000:42000"
     volumes:
       - ./config:/home/node/.openclaw
       - ./workspace:/home/node/.openclaw/workspace
+      - pinokio_data:/pinokio-data
+
+volumes:
+  pinokio_data:
