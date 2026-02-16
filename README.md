@@ -52,7 +52,8 @@ Or run interactive menu (Git Bash/WSL shell):
 - `config-telegram.bat` sets `channels.telegram.allowFrom=["*"]` and `channels.telegram.dmPolicy=allowlist` for local DM testing.
 - The default image is `ghcr.io/openclaw/openclaw:latest` (official registry path).
 - Docker bind model: `OPENCLAW_HOST_BIND=127.0.0.1` (host exposure), `OPENCLAW_GATEWAY_BIND=lan` (OpenClaw bind mode inside container).
-- Additional localhost port forward is enabled for host access to services listening on container `42000` (`127.0.0.1:42000 -> 42000`).
+- Additional localhost forwards are enabled for host access to container-local services:
+  `127.0.0.1:42000 -> 42000` (Pinokio web) and `127.0.0.1:30001 -> 30001` (API docs, for example `http://localhost:30001/api/docs`).
 - Docker volumes: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
 - Docker Desktop must already be installed and running.
 - The gateway defaults to `127.0.0.1:18789`.

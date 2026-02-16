@@ -24,7 +24,7 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 
 1. Keep gateway bind at `127.0.0.1`.
 2. Keep default gateway port at `18789`.
-3. Keep localhost forward `127.0.0.1:42000 -> 42000` for host access to container-local web workflows.
+3. Keep localhost forwards `127.0.0.1:42000 -> 42000` (Pinokio web) and `127.0.0.1:30001 -> 30001` (container API docs/workflows).
 4. Keep Docker volume paths stable: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
 5. Ensure `openClaw/config/openclaw.json` exists with local Control UI token auth enabled for localhost workflows.
 6. For Telegram quick-start, default DM auth should allow local testing (`allowFrom=["*"]`, `dmPolicy=allowlist`).

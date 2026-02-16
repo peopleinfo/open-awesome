@@ -31,7 +31,7 @@ Expected outcomes:
 4. Generate `openClaw/config/openclaw.json` when missing for local Control UI auth.
 5. Create `openClaw/docker-compose.yml` when missing (and migrate legacy volume mounts when detected).
 6. Pull and start OpenClaw in detached mode.
-7. Keep localhost-only forwards for gateway and local workspace service ports (`18789`, `42000`).
+7. Keep localhost-only forwards for gateway and local workspace/API service ports (`18789`, `42000`, `30001->30001`).
 
 ## Optional Channel Task
 

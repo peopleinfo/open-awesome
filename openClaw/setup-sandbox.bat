@@ -257,6 +257,7 @@ exit /b 0
     echo     ports:
     echo       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
     echo       - "${OPENCLAW_HOST_BIND}:42000:42000"
+    echo       - "${OPENCLAW_HOST_BIND}:30001:30001"
     echo     volumes:
     echo       - ./config:/home/node/.openclaw
     echo       - ./workspace:/home/node/.openclaw/workspace

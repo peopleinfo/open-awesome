@@ -28,6 +28,7 @@ services:
     ports:
       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
       - "${OPENCLAW_HOST_BIND}:42000:42000"
+      - "${OPENCLAW_HOST_BIND}:30001:30001"
     volumes:
       - ./config:/home/node/.openclaw
       - ./workspace:/home/node/.openclaw/workspace
