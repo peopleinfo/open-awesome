@@ -33,6 +33,7 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 6. If upgrading from an older setup, run `openClaw\setup-sandbox.bat` once to migrate compose mounts and gateway config.
 7. To enable Codex OAuth auth for agent LLM, run `openClaw\apply-openai-oauth.bat`.
    If you hit `OAuth token refresh failed for openai-codex`, the script retries automatically once (default) and then prompts for `codex login` if re-auth is still required.
+   To switch to a different Codex account, run `openClaw\apply-openai-oauth.bat --re-auth` and complete host login.
 8. To configure Telegram channel, run `openClaw\config-telegram.bat` and enter your bot token.
 9. To run Pinokio web and open it from host, run `openClaw\pinokio-host.bat start`, then browse `http://localhost:42000`.
    If first launch is still warming up, run `openClaw\pinokio-host.bat status` until it reports healthy.
@@ -46,7 +47,7 @@ Or run interactive menu (Git Bash/WSL shell):
 
 - The setup script creates `openClaw/.env` with generated secrets if missing.
 - The setup script creates `openClaw/config/openclaw.json` if missing to allow local Control UI token auth.
-- `apply-openai-oauth.bat` supports `--max-retries N` and `--skip-probe` for OAuth bootstrap control.
+- `apply-openai-oauth.bat` supports `--max-retries N`, `--skip-probe`, and `--re-auth` for OAuth bootstrap/account switching.
 - `pinokio-host.bat` supports `start`, `stop`, `status`, and `logs`.
 - `pinokio-host.bat` also supports `--wait-ready SECONDS` and `--no-pause` for unattended startup.
 - `run.bat` supports `auto`, `--manual`, `--start-pinokio`, `--wait-pinokio SECONDS`, and `--no-pause`.

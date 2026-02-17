@@ -19,6 +19,7 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 3. Generate secrets at runtime when missing; do not hard-code real credentials.
 4. Fail early with actionable error messages for missing prerequisites.
 5. For OAuth bootstrap helpers, include bounded retry and clear re-auth instructions when refresh tokens are invalidated.
+6. Provide an explicit account-switch re-auth path (for example a `--re-auth` style option) before token import.
 
 ## OpenClaw Defaults
 
@@ -41,5 +42,6 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 3. Document any manual prerequisites in `README.md`.
 4. For channel helpers (for example Telegram), validate via `openclaw channels list` and `openclaw channels status --probe`.
 5. For Codex OAuth helper changes, validate quick probe behavior and verify recovery messaging for refresh-token failures.
-6. For Pinokio host helper changes, validate `start`, `status`, and host URL reachability on `http://localhost:42000`.
-7. For startup automation changes, validate `openClaw\run.bat auto --wait-pinokio 240` can run without interactive prompts.
+6. For Codex OAuth helper changes, validate account switch flow (`--re-auth`) imports the newly selected host account.
+7. For Pinokio host helper changes, validate `start`, `status`, and host URL reachability on `http://localhost:42000`.
+8. For startup automation changes, validate `openClaw\run.bat auto --wait-pinokio 240` can run without interactive prompts.

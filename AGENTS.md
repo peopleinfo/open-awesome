@@ -70,6 +70,7 @@ Expected outcomes:
 2. Set `openai-codex/gpt-5.3-codex` as the main agent model.
 3. Detect `OAuth token refresh failed for openai-codex` / `refresh_token_reused` and retry import with bounded attempts.
 4. If retries are exhausted, provide explicit re-auth steps (`codex login`) and log command guidance.
+5. Support explicit account switching via re-auth mode before import (for example `--re-auth`).
 
 ## Definition Of Done
 

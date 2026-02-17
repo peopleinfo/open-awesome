@@ -8,6 +8,7 @@ if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "CODEX_AUTH=%USERPROFILE%\.codex\auth.json"
 set "MAX_RETRIES=1"
 set "SKIP_PROBE="
+set "REAUTH="
 set "RETRY_COUNT=0"
 set "LOG_WINDOW_SECONDS=180"
 
@@ -29,6 +30,11 @@ if /I "%~1"=="--skip-probe" (
     shift
     goto parse_args
 )
+if /I "%~1"=="--re-auth" (
+    set "REAUTH=1"
+    shift
+    goto parse_args
+)
 if /I "%~1"=="--help" goto usage
 if /I "%~1"=="-h" goto usage
 echo ERROR: Unknown argument: %~1
@@ -47,6 +53,14 @@ echo ===========================================================================
 echo OpenClaw Apply OpenAI Codex OAuth
 echo ============================================================================
 echo.
+
+if defined REAUTH (
+    call :host_reauth
+    if errorlevel 1 (
+        pause
+        exit /b 1
+    )
+)
 
 if not exist "%CODEX_AUTH%" (
     echo ERROR: Codex auth file not found: %CODEX_AUTH%
@@ -160,17 +174,41 @@ docker logs --since %LOG_WINDOW_SECONDS%s openclaw 2>&1 | findstr /I /C:"OAuth t
 if errorlevel 1 exit /b 1
 exit /b 0
 
+:host_reauth
+where codex >nul 2>&1
+if %errorLevel% neq 0 (
+    echo ERROR: Codex CLI not found in PATH.
+    echo Install Codex CLI and run: codex login
+    exit /b 1
+)
+echo [*] Re-auth requested. Complete host login to switch account...
+call codex login
+if %errorLevel% neq 0 (
+    echo ERROR: codex login failed or was canceled.
+    echo Retry host authentication:
+    echo   codex login
+    exit /b 1
+)
+if not exist "%CODEX_AUTH%" (
+    echo ERROR: Codex auth file was not created after login: %CODEX_AUTH%
+    echo Retry host authentication:
+    echo   codex login
+    exit /b 1
+)
+exit /b 0
+
 :usage
 echo Usage:
-echo   openClaw\apply-openai-oauth.bat [--max-retries N] [--skip-probe]
+echo   openClaw\apply-openai-oauth.bat [--max-retries N] [--skip-probe] [--re-auth]
 echo.
 echo Options:
 echo   --max-retries N  Number of automatic retries after refresh failure ^(default: 1^)
 echo   --skip-probe     Skip the quick local test prompt
+echo   --re-auth        Run codex login first to switch/re-auth the host account
 echo.
 exit /b 0
 
 :usage_error
 echo.
-call :usage >nul
+call :usage
 exit /b 1
