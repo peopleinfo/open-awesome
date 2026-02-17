@@ -31,6 +31,8 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 7. For Pinokio host workflows, use `openClaw/pinokio-host.bat` so lifecycle and readiness checks are repeatable.
 8. Normalize Pinokio config home paths to Linux container paths before launching from Windows-hosted workspaces.
 9. Keep Pinokio runtime data on Docker volumes (for example `/pinokio-data`) instead of Windows bind mounts when conda/bootstrap is slow or stuck.
+10. Keep `openClaw/run.bat` and `openClaw/pinokio-host.bat` compatible with unattended startup (`auto`, `--wait-pinokio`, `--wait-ready`, `--no-pause`).
+11. Keep `openClaw/run.bat` no-arg default equivalent to `auto --wait-pinokio 240` and preserve `--manual` for interactive use.
 
 ## Verification
 
@@ -40,3 +42,4 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 4. For channel helpers (for example Telegram), validate via `openclaw channels list` and `openclaw channels status --probe`.
 5. For Codex OAuth helper changes, validate quick probe behavior and verify recovery messaging for refresh-token failures.
 6. For Pinokio host helper changes, validate `start`, `status`, and host URL reachability on `http://localhost:42000`.
+7. For startup automation changes, validate `openClaw\run.bat auto --wait-pinokio 240` can run without interactive prompts.

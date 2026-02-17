@@ -27,6 +27,8 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 2. Run `openClaw\setup-sandbox.bat`.
 3. Confirm services with `docker compose -f openClaw\docker-compose.yml ps`.
 4. For normal start after setup, run `openClaw\run.bat`.
+   Default behavior is unattended startup with Pinokio readiness wait (`auto --wait-pinokio 240`).
+   For manual/interactive mode, run `openClaw\run.bat --manual`.
 5. Open the `Dashboard with token` URL printed by `run.bat`.
 6. If upgrading from an older setup, run `openClaw\setup-sandbox.bat` once to migrate compose mounts and gateway config.
 7. To enable Codex OAuth auth for agent LLM, run `openClaw\apply-openai-oauth.bat`.
@@ -46,6 +48,9 @@ Or run interactive menu (Git Bash/WSL shell):
 - The setup script creates `openClaw/config/openclaw.json` if missing to allow local Control UI token auth.
 - `apply-openai-oauth.bat` supports `--max-retries N` and `--skip-probe` for OAuth bootstrap control.
 - `pinokio-host.bat` supports `start`, `stop`, `status`, and `logs`.
+- `pinokio-host.bat` also supports `--wait-ready SECONDS` and `--no-pause` for unattended startup.
+- `run.bat` supports `auto`, `--manual`, `--start-pinokio`, `--wait-pinokio SECONDS`, and `--no-pause`.
+- `run.bat` no-arg default is equivalent to unattended startup with Pinokio wait (`auto --wait-pinokio 240`).
 - Pinokio first launch may take 30-90 seconds and can restart once while initializing/migrating home data.
 - Pinokio runtime home defaults to Docker volume `pinokio_data` mounted at `/pinokio-data` to avoid Windows bind-mount stalls during conda setup.
 - Telegram bot tokens are stored only in `openClaw/config/openclaw.json` (gitignored).
@@ -54,6 +59,7 @@ Or run interactive menu (Git Bash/WSL shell):
 - Docker bind model: `OPENCLAW_HOST_BIND=127.0.0.1` (host exposure), `OPENCLAW_GATEWAY_BIND=lan` (OpenClaw bind mode inside container).
 - Additional localhost forwards are enabled for host access to container-local services:
   `127.0.0.1:42000 -> 42000` (Pinokio web) and `127.0.0.1:30001 -> 30001` (API docs, for example `http://localhost:30001/api/docs`).
+  The `30001` forward is published at container start, but HTTP responses depend on an internal service binding to `30001`.
 - Docker volumes: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
 - Docker Desktop must already be installed and running.
 - The gateway defaults to `127.0.0.1:18789`.
@@ -71,3 +77,11 @@ Use `<repo_root>` as the folder where this repository is cloned (dynamic per mac
 Container path for Pinokio runtime data is fixed and user-independent:
 
 - `pinokio_data:/pinokio-data`
+
+## Windows Startup Automation
+
+Use Windows Task Scheduler to run OpenClaw and Pinokio at login/startup with no prompt windows:
+
+- Program/script: `<repo_root>\openClaw\run.bat`
+- Arguments: optional, default no-arg already runs `auto --wait-pinokio 240`
+- Start in: `<repo_root>\openClaw`

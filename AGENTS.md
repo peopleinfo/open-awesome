@@ -32,6 +32,8 @@ Expected outcomes:
 5. Create `openClaw/docker-compose.yml` when missing (and migrate legacy volume mounts when detected).
 6. Pull and start OpenClaw in detached mode.
 7. Keep localhost-only forwards for gateway and local workspace/API service ports (`18789`, `42000`, `30001->30001`).
+8. Keep `openClaw/run.bat` usable in unattended startup mode (`auto`) with no interactive prompt requirement.
+9. Keep `openClaw/run.bat` no-arg default aligned with unattended startup (`auto --wait-pinokio 240`) and keep `--manual` as explicit opt-out.
 
 ## Optional Channel Task
 
@@ -56,6 +58,7 @@ Expected outcomes:
 4. Keep host exposure local-only via `127.0.0.1:42000`.
 5. Normalize Pinokio home config for Linux container runtime before startup.
 6. Keep Pinokio home on Docker-managed storage (not Windows bind mount) for stable conda/bootstrap performance.
+7. Support unattended execution flags for startup automation (`--wait-ready`, `--no-pause`).
 
 ## OAuth Recovery Task
 
