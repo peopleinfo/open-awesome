@@ -1,0 +1,14 @@
+{
+  "name": "@zero-claw/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "node ./scripts/start-electron.cjs",
+    "start": "node ./scripts/start-electron.cjs",
+    "check": "node --check main.js && node --check preload.js && node --check renderer/app.js"
+  },
+  "devDependencies": {
+    "electron": "^35.2.1"
+  }
+}

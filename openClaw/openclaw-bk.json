@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.15",
+    "lastTouchedAt": "2026-02-17T16:09:28.902Z"
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/gpt-5.3-codex"
+      },
+      "models": {
+        "openai-codex/gpt-5.3-codex": {}
+      },
+      "userTimezone": "Asia/Phnom_Penh",
+      "envelopeTimezone": "user",
+      "compaction": {
+        "mode": "safeguard"
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "allowlist",
+      "botToken": "",
+      "allowFrom": [
+        "*"
+      ],
+      "groupPolicy": "allowlist",
+      "streamMode": "partial"
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "controlUi": {
+      "allowInsecureAuth": true
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      },
+      "camoufox-browser": {
+        "enabled": true
+      }
+    },
+    "installs": {
+      "camoufox-browser": {
+        "source": "npm",
+        "spec": "@askjo/camoufox-browser",
+        "installPath": "/home/node/.openclaw/extensions/camoufox-browser",
+        "version": "1.0.12",
+        "installedAt": "2026-02-17T16:09:14.414Z"
+      }
+    }
+  }
+}

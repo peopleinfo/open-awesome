@@ -1,3 +1,10 @@
 openClaw/.env
 openClaw/workspace/
 openClaw/config/
+zero-claw/.env
+zero-claw/data/todos.json
+zero-claw/data/settings.json
+zero-claw/data/zeroclaw-gateway.log
+zero-claw/node_modules/
+zero-claw/apps/*/node_modules/
+zero-claw/services/*/node_modules/

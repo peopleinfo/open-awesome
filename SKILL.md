@@ -25,7 +25,7 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 
 1. Keep gateway bind at `127.0.0.1`.
 2. Keep default gateway port at `18789`.
-3. Keep localhost forwards `127.0.0.1:42000 -> 42000` (Pinokio web) and `127.0.0.1:30001 -> 30001` (container API docs/workflows).
+3. Keep localhost forwards `127.0.0.1:42000 -> 42000` (Pinokio web), `127.0.0.1:30001 -> 30001` (container API docs/workflows), and `127.0.0.1:30110 -> 30110` (camoufox profile manager API).
 4. Keep Docker volume paths stable: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
 5. Ensure `openClaw/config/openclaw.json` exists with local Control UI token auth enabled for localhost workflows.
 6. For Telegram quick-start, default DM auth should allow local testing (`allowFrom=["*"]`, `dmPolicy=allowlist`).
@@ -34,6 +34,27 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 9. Keep Pinokio runtime data on Docker volumes (for example `/pinokio-data`) instead of Windows bind mounts when conda/bootstrap is slow or stuck.
 10. Keep `openClaw/run.bat` and `openClaw/pinokio-host.bat` compatible with unattended startup (`auto`, `--wait-pinokio`, `--wait-ready`, `--no-pause`).
 11. Keep `openClaw/run.bat` no-arg default equivalent to `auto --wait-pinokio 240` and preserve `--manual` for interactive use.
+12. For Camoufox browser workflows, enforce profile/state through:
+    - Windows: `<repo_root>\openClaw\workspace\pinokio-data\api\camoufox-mgt`
+    - Linux: `<repo_root>/openClaw/workspace/pinokio-data/api/camoufox-mgt`
+13. Use `skills/camoufox-mgt-enforcer/SKILL.md` for agent instructions that require Camoufox-only browser automation.
+
+## Zero Claw Starter Defaults
+
+1. Keep `zero-claw` API bind local-only (`127.0.0.1`) unless explicit public exposure is requested.
+2. Keep default API port at `3010`.
+3. Keep Todo data local and gitignored (`zero-claw/data/todos.json`).
+4. Keep secrets local and gitignored (`zero-claw/.env`), with `.env.example` for template-only values.
+5. Keep setup state local and gitignored (`zero-claw/data/settings.json`) for first-run wizard flows.
+6. Ensure desktop UI and Telegram command handlers operate on the same CRUD store.
+7. Keep desktop navigation modular so Todo is a sample module and new modules can be added incrementally.
+8. Keep end-user startup simple with both Windows and Linux entrypoints (`zero-claw/run.bat`, `zero-claw/run.sh`).
+9. Prefer GUI-first operations for end users by exposing common `zeroclaw` runtime actions in the desktop app.
+10. Enforce readiness gating so users complete required setup before accessing non-setup modules.
+11. Keep Telegram webhook URL optional by default in readiness gates unless a strict webhook policy is explicitly requested.
+12. Provide a GUI install path for ZeroClaw CLI and surface installer logs/errors in Setup Wizard.
+13. Provide GUI support to apply Codex defaults in zeroclaw config (`default_provider=openai`, `default_model=gpt-5.2-codex`) without terminal use.
+14. Keep Agent Prompt usable without `OPENAI_API_KEY` by falling back to Codex OAuth (`codex login`) when zeroclaw provider auth fails.
 
 ## Verification
 
@@ -45,3 +66,4 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 6. For Codex OAuth helper changes, validate account switch flow (`--re-auth`) imports the newly selected host account.
 7. For Pinokio host helper changes, validate `start`, `status`, and host URL reachability on `http://localhost:42000`.
 8. For startup automation changes, validate `openClaw\run.bat auto --wait-pinokio 240` can run without interactive prompts.
+9. For Zero Claw changes, validate `zero-claw` startup scripts run, `GET /health` returns success, setup endpoints respond (including Codex-default checks), and Agent module endpoints return structured status.

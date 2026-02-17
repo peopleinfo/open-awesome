@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zero Claw Workspace</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar">
+        <h1 id="app-title">Zero Claw</h1>
+        <p class="sidebar-subtitle">Own Dashboard Runtime</p>
+        <nav class="nav">
+          <button class="nav-btn active" data-section="overview">Overview</button>
+          <button class="nav-btn" data-section="setup">Setup Wizard</button>
+          <button class="nav-btn" data-section="todos">Todo Module</button>
+          <button class="nav-btn" data-section="integrations">Integrations</button>
+          <button class="nav-btn" data-section="agent">Agent</button>
+        </nav>
+        <div class="api-chip" id="api-meta">Connecting...</div>
+      </aside>
+
+      <section class="content">
+        <div id="setup-lock" class="lock-banner hidden">
+          Setup required: complete all checklist items in Setup Wizard before using modules.
+        </div>
+
+        <header class="topbar">
+          <h2 id="page-title">Overview</h2>
+          <p id="status-text">Loading workspace...</p>
+        </header>
+
+        <section class="panel section active" data-section="overview">
+          <div class="card-grid">
+            <article class="card">
+              <p class="card-label">Module</p>
+              <h3>Todo Board</h3>
+              <p>Desktop + Telegram CRUD share one local store.</p>
+              <button type="button" data-go="todos">Open Todo Board</button>
+            </article>
+            <article class="card">
+              <p class="card-label">First Run</p>
+              <h3>Setup Wizard</h3>
+              <p>Set app name, Telegram token, webhook URL, and validate bot access.</p>
+              <button type="button" data-go="setup">Open Setup</button>
+            </article>
+            <article class="card muted">
+              <p class="card-label">Roadmap</p>
+              <h3>More Modules</h3>
+              <p>Add Notes, Workflows, CRM, custom actions, and menu entries over time.</p>
+            </article>
+            <article class="card">
+              <p class="card-label">ZeroClaw</p>
+              <h3>Agent Console</h3>
+              <p>Control gateway, diagnostics, and prompts from GUI only.</p>
+              <button type="button" data-go="agent">Open Agent</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel section" data-section="setup">
+          <h3>Setup Wizard</h3>
+          <p class="hint">
+            Local-only settings are stored in <code>zero-claw/data/settings.json</code>.
+          </p>
+
+          <div class="setup-checklist">
+            <p class="card-label">Required Checklist</p>
+            <ul>
+              <li id="check-setup-completed">Setup completion flag: pending</li>
+              <li id="check-zeroclaw-installed">ZeroClaw CLI installed: pending</li>
+              <li id="check-telegram-token">Telegram bot token saved: pending</li>
+              <li id="check-telegram-webhook">Telegram webhook URL saved: pending</li>
+              <li id="check-codex-defaults">Codex defaults configured: pending</li>
+            </ul>
+            <div class="row">
+              <button id="install-zeroclaw-btn" type="button">Install ZeroClaw</button>
+              <button id="setup-codex-btn" type="button" class="alt">Set Codex Defaults</button>
+              <button id="complete-setup-btn" type="button">Complete Required Setup</button>
+              <button id="refresh-readiness-btn" type="button" class="alt">Refresh Checklist</button>
+            </div>
+          </div>
+
+          <form id="setup-form" class="stack">
+            <label for="setup-app-name">App Name</label>
+            <input id="setup-app-name" type="text" maxlength="60" placeholder="My Command Center" />
+
+            <label for="setup-bot-token">Telegram Bot Token</label>
+            <input id="setup-bot-token" type="password" placeholder="123456789:ABCDEF..." />
+
+            <label for="setup-webhook-url">Webhook URL</label>
+            <input id="setup-webhook-url" type="text" placeholder="https://your-domain/api/telegram/webhook" />
+
+            <label for="setup-webhook-secret">Webhook Secret (Optional)</label>
+            <input id="setup-webhook-secret" type="password" placeholder="long-random-secret" />
+
+            <div class="row">
+              <button id="save-setup-btn" type="submit">Save Setup</button>
+              <button id="probe-setup-btn" type="button" class="alt">Probe Telegram</button>
+              <button id="webhook-setup-btn" type="button" class="alt">Set Webhook</button>
+            </div>
+          </form>
+          <pre id="setup-output" class="output"></pre>
+        </section>
+
+        <section class="panel section" data-section="todos">
+          <h3>Todo Module</h3>
+          <form id="todo-form" class="todo-form">
+            <label for="todo-title">New Task</label>
+            <div class="form-row">
+              <input
+                id="todo-title"
+                type="text"
+                maxlength="200"
+                placeholder="Add a task users can also manage from Telegram"
+                required
+              />
+              <button type="submit">Add</button>
+            </div>
+          </form>
+
+          <div class="toolbar">
+            <button id="refresh-btn" type="button" class="alt">Refresh Todos</button>
+            <span id="todo-meta">Waiting for first sync...</span>
+          </div>
+
+          <ul id="todo-list" class="todo-list"></ul>
+        </section>
+
+        <section class="panel section" data-section="integrations">
+          <h3>Integrations (Scaffold)</h3>
+          <p class="hint">Use this section to add future modules and external connectors.</p>
+          <div class="card-grid">
+            <article class="card muted">
+              <p class="card-label">Placeholder</p>
+              <h3>Notes Module</h3>
+              <p>Draft notes with desktop + channel sync.</p>
+            </article>
+            <article class="card muted">
+              <p class="card-label">Placeholder</p>
+              <h3>Workflow Module</h3>
+              <p>Trigger automations, schedules, and notifications.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel section" data-section="agent">
+          <h3>ZeroClaw Agent Module</h3>
+          <p class="hint">
+            Run common ZeroClaw actions without opening terminal.
+          </p>
+
+          <div class="agent-grid">
+            <div class="agent-card">
+              <p class="card-label">Runtime Status</p>
+              <p><strong>Installed:</strong> <span id="agent-installed">-</span></p>
+              <p><strong>Version:</strong> <span id="agent-version">-</span></p>
+              <p><strong>Default Provider:</strong> <span id="agent-provider">-</span></p>
+              <p><strong>Default Model:</strong> <span id="agent-model">-</span></p>
+              <p><strong>Gateway:</strong> <span id="agent-gateway">-</span></p>
+              <p><strong>Gateway PID:</strong> <span id="agent-pid">-</span></p>
+            </div>
+
+            <div class="agent-card">
+              <p class="card-label">Gateway</p>
+              <label for="agent-bind">Bind</label>
+              <input id="agent-bind" type="text" value="127.0.0.1" />
+              <label for="agent-port">Port</label>
+              <input id="agent-port" type="text" value="8080" />
+              <div class="row">
+                <button id="agent-refresh" type="button" class="alt">Refresh Status</button>
+                <button id="agent-start" type="button">Start Gateway</button>
+                <button id="agent-stop" type="button" class="alt">Stop Gateway</button>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <p class="card-label">Diagnostics</p>
+              <div class="row">
+                <button id="agent-doctor" type="button" class="alt">Run Doctor</button>
+                <button id="agent-channel-doctor" type="button" class="alt">Channel Doctor</button>
+                <button id="agent-logs" type="button" class="alt">Gateway Logs</button>
+              </div>
+            </div>
+          </div>
+
+          <form id="agent-prompt-form" class="stack">
+            <label for="agent-prompt">Agent Prompt</label>
+            <textarea id="agent-prompt" rows="4" placeholder="Ask zeroclaw agent..."></textarea>
+            <div class="row">
+              <button id="agent-send" type="submit">Send Prompt</button>
+            </div>
+          </form>
+
+          <pre id="agent-output" class="output"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

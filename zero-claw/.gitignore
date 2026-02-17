@@ -1,0 +1,8 @@
+node_modules/
+apps/*/node_modules/
+services/*/node_modules/
+data/todos.json
+data/settings.json
+data/zeroclaw-gateway.log
+.env
+npm-debug.log*

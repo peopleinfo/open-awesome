@@ -1,0 +1,24 @@
+{
+  "name": "zero-claw",
+  "version": "0.1.0",
+  "private": true,
+  "description": "End-user Todo dashboard starter with Electron + Telegram CRUD flow.",
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n API,DESKTOP -c green,cyan \"npm run dev:api\" \"npm run dev:desktop\"",
+    "dev:api": "npm --workspace @zero-claw/api run dev",
+    "dev:desktop": "npm --workspace @zero-claw/desktop run dev",
+    "start:api": "npm --workspace @zero-claw/api run start",
+    "start:desktop": "npm --workspace @zero-claw/desktop run start",
+    "check": "npm --workspace @zero-claw/api run check && npm --workspace @zero-claw/desktop run check"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,374 @@
+:root {
+  color-scheme: light;
+  --bg: #e8ece8;
+  --bg-alt: #f3efe5;
+  --surface: #fefbf4;
+  --ink: #1f2322;
+  --muted: #5f6662;
+  --line: #c8cec9;
+  --accent: #0d8b6f;
+  --accent-deep: #0c5f4d;
+  --alt-btn: #e8ede9;
+  --danger: #b23340;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 20%, #f8fefb 0, transparent 40%),
+    radial-gradient(circle at 90% 10%, #fff4d9 0, transparent 38%),
+    linear-gradient(140deg, var(--bg), var(--bg-alt) 62%, #f6f1e2);
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid var(--line);
+  padding: 1.4rem 1rem;
+  background: rgba(255, 255, 255, 0.46);
+  backdrop-filter: blur(5px);
+}
+
+.sidebar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.sidebar-subtitle {
+  margin: 0.2rem 0 1.2rem;
+  color: var(--muted);
+}
+
+.nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nav-btn.active {
+  background: var(--accent);
+  color: #f5fffb;
+  border-color: var(--accent);
+}
+
+.nav-btn.locked {
+  opacity: 0.55;
+}
+
+.api-chip {
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  background: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  padding: 1rem 1.1rem 1.5rem;
+}
+
+.topbar {
+  margin-bottom: 0.8rem;
+}
+
+.topbar h2 {
+  margin: 0;
+}
+
+.topbar p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.lock-banner {
+  border: 1px solid #b88a2c;
+  background: #fff3d8;
+  color: #6a4a11;
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  background: var(--surface);
+  box-shadow: 0 10px 24px rgba(14, 19, 16, 0.06);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: #fff;
+}
+
+.card h3 {
+  margin: 0.25rem 0;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.card-label {
+  margin-bottom: 0.25rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.card.muted {
+  background: #fbfbfb;
+}
+
+button {
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 0.58rem 0.84rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: #f4fff7;
+  cursor: pointer;
+}
+
+button.alt {
+  background: var(--alt-btn);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+button.delete {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.stack {
+  display: grid;
+  gap: 0.45rem;
+}
+
+label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  font-size: 0.95rem;
+  background: #fff;
+  resize: vertical;
+}
+
+input:focus {
+  outline: 2px solid color-mix(in oklab, var(--accent), white 68%);
+  border-color: var(--accent);
+}
+
+textarea:focus {
+  outline: 2px solid color-mix(in oklab, var(--accent), white 68%);
+  border-color: var(--accent);
+}
+
+.row,
+.form-row,
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  justify-content: space-between;
+  margin-top: 0.65rem;
+  color: var(--muted);
+}
+
+.todo-form {
+  margin-top: 0.2rem;
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.todo-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  background: #fff;
+}
+
+.todo-title.done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.todo-meta {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.actions button {
+  padding: 0.38rem 0.52rem;
+}
+
+.hint {
+  margin-top: 0;
+  color: var(--muted);
+}
+
+.setup-checklist {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem;
+  margin-bottom: 0.75rem;
+  background: #fff;
+}
+
+.setup-checklist ul {
+  margin: 0.3rem 0 0.6rem;
+  padding-left: 1rem;
+}
+
+.setup-checklist li.ok {
+  color: #116638;
+}
+
+.setup-checklist li.pending {
+  color: #7d5b14;
+}
+
+.setup-checklist li.optional {
+  color: #5b6473;
+}
+
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.agent-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.agent-card p {
+  margin: 0.2rem 0;
+}
+
+.output {
+  margin: 0.8rem 0 0;
+  min-height: 92px;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.6rem;
+  background: #121715;
+  color: #cdebd8;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .todo-item {
+    grid-template-columns: auto 1fr;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}

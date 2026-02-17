@@ -6,6 +6,7 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 
 - Establish project docs and agent operating conventions.
 - Provide a first runnable task: OpenClaw Docker sandbox setup on Windows.
+- Provide a second runnable task: Zero Claw end-user dashboard starter (Electron + Telegram CRUD).
 - Keep setup idempotent and safe by default.
 
 ## Repository Layout
@@ -13,6 +14,7 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 - `README.md`: project overview and startup flow.
 - `AGENTS.md`: rules for AI agents working in this repo.
 - `SKILL.md`: reusable skill instructions for this project.
+- `skills/camoufox-mgt-enforcer/SKILL.md`: enforce Camoufox browser usage with the local camoufox profile manager app on `localhost:30110`.
 - `menu.sh`: interactive menu to pick install/setup actions.
 - `skill.sh`: helper to initialize/validate skill metadata files.
 - `openClaw/setup-sandbox.bat`: Windows setup entrypoint for local sandboxing.
@@ -20,6 +22,7 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 - `openClaw/apply-openai-oauth.bat`: import local Codex OAuth into OpenClaw auth profiles (with bounded retry on OAuth refresh failure).
 - `openClaw/config-telegram.bat`: configure Telegram bot channel in OpenClaw.
 - `openClaw/pinokio-host.bat`: start/stop/status/logs helper for running Pinokio web in OpenClaw and exposing it on host `localhost:42000`.
+- `zero-claw/`: end-user starter workspace for Electron dashboard + local Todo API + Telegram webhook CRUD flow.
 
 ## Quick Start (Windows)
 
@@ -43,6 +46,22 @@ Or run interactive menu (Git Bash/WSL shell):
 1. Run `bash menu.sh`.
 2. Pick install actions from the menu.
 
+## Zero Claw Starter (End User Flow)
+
+1. Windows: run `<repo_root>\zero-claw\run.bat`.
+2. Linux: run `<repo_root>/zero-claw/run.sh`.
+3. This starts:
+   - local API on `127.0.0.1:3010`
+   - Electron dashboard with sections (`Overview`, `Setup`, `Todos`, `Integrations`, `Agent`)
+4. In desktop `Setup Wizard`, set app name + Telegram token + webhook URL.
+5. Click `Set Codex Defaults` (or use `Complete Required Setup`, which applies Codex defaults automatically) so ZeroClaw uses OpenAI Codex profile by default.
+6. Click `Complete Required Setup` to unlock user modules.
+7. To enable Telegram CRUD without UI, set token in `<repo_root>/zero-claw/.env`:
+   - `TELEGRAM_BOT_TOKEN=...`
+8. Register your Telegram webhook to:
+   - `https://<public-host>/api/telegram/webhook`
+9. Telegram and Electron both manage the same Todo store (`zero-claw/data/todos.json`).
+
 ## Notes
 
 - The setup script creates `openClaw/.env` with generated secrets if missing.
@@ -59,12 +78,20 @@ Or run interactive menu (Git Bash/WSL shell):
 - The default image is `ghcr.io/openclaw/openclaw:latest` (official registry path).
 - Docker bind model: `OPENCLAW_HOST_BIND=127.0.0.1` (host exposure), `OPENCLAW_GATEWAY_BIND=lan` (OpenClaw bind mode inside container).
 - Additional localhost forwards are enabled for host access to container-local services:
-  `127.0.0.1:42000 -> 42000` (Pinokio web) and `127.0.0.1:30001 -> 30001` (API docs, for example `http://localhost:30001/api/docs`).
-  The `30001` forward is published at container start, but HTTP responses depend on an internal service binding to `30001`.
+  `127.0.0.1:42000 -> 42000` (Pinokio web), `127.0.0.1:30001 -> 30001` (API docs, for example `http://localhost:30001/api/docs`), and
+  `127.0.0.1:30110 -> 30110` (camoufox profile manager API, for example `http://localhost:30110/health`).
+  Host forwards are published at container start, but HTTP responses depend on internal services binding to those ports.
 - Docker volumes: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
 - Docker Desktop must already be installed and running.
 - The gateway defaults to `127.0.0.1:18789`.
 - For live logs, use `docker compose -f openClaw\docker-compose.yml --env-file openClaw\.env logs -f openclaw`.
+- `zero-claw` defaults to localhost API bind (`127.0.0.1:3010`) and keeps Todo data local (`zero-claw/data/todos.json`).
+- `zero-claw` setup preferences are local and gitignored in `zero-claw/data/settings.json`.
+- `zero-claw` Agent module can control local `zeroclaw` CLI (gateway/doctor/prompt) and writes runtime logs to `zero-claw/data/zeroclaw-gateway.log`.
+- `zero-claw` setup lock requires ZeroClaw detection + Telegram token; webhook URL is optional/recommended.
+- `zero-claw` Setup Wizard includes `Install ZeroClaw` to run CLI install directly from GUI.
+- `zero-claw` Setup Wizard includes `Set Codex Defaults` and auto-applies Codex defaults on setup completion (`openai` + `gpt-5.2-codex`).
+- `zero-claw` Agent Prompt falls back to Codex OAuth (`codex login`) when zeroclaw provider auth fails, so `OPENAI_API_KEY` is not required for prompt use.
 
 ## Host Paths (Windows + Linux)
 
@@ -72,8 +99,18 @@ Use `<repo_root>` as the folder where this repository is cloned (dynamic per mac
 
 - Windows workspace/output: `<repo_root>\openClaw\workspace`
 - Windows config + logs: `<repo_root>\openClaw\config`
+- Windows camoufox manager app: `<repo_root>\openClaw\workspace\pinokio-data\api\camoufox-mgt`
 - Linux workspace/output: `<repo_root>/openClaw/workspace`
 - Linux config + logs: `<repo_root>/openClaw/config`
+- Linux camoufox manager app: `<repo_root>/openClaw/workspace/pinokio-data/api/camoufox-mgt`
+- Windows Zero Claw workspace: `<repo_root>\zero-claw`
+- Windows Zero Claw todo data: `<repo_root>\zero-claw\data\todos.json`
+- Windows Zero Claw settings data: `<repo_root>\zero-claw\data\settings.json`
+- Windows Zero Claw gateway log: `<repo_root>\zero-claw\data\zeroclaw-gateway.log`
+- Linux Zero Claw workspace: `<repo_root>/zero-claw`
+- Linux Zero Claw todo data: `<repo_root>/zero-claw/data/todos.json`
+- Linux Zero Claw settings data: `<repo_root>/zero-claw/data/settings.json`
+- Linux Zero Claw gateway log: `<repo_root>/zero-claw/data/zeroclaw-gateway.log`
 
 Container path for Pinokio runtime data is fixed and user-independent:
 
