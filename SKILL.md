@@ -27,17 +27,18 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 2. Keep default gateway port at `18789`.
 3. Keep localhost forwards `127.0.0.1:42000 -> 42000` (Pinokio web), `127.0.0.1:30001 -> 30001` (container API docs/workflows), and `127.0.0.1:30110 -> 30110` (camoufox profile manager API).
 4. Keep Docker volume paths stable: `openClaw/config -> /home/node/.openclaw` and `openClaw/workspace -> /home/node/.openclaw/workspace`.
-5. Ensure `openClaw/config/openclaw.json` exists with local Control UI token auth enabled for localhost workflows.
-6. For Telegram quick-start, default DM auth should allow local testing (`allowFrom=["*"]`, `dmPolicy=allowlist`).
-7. For Pinokio host workflows, use `openClaw/pinokio-host.bat` so lifecycle and readiness checks are repeatable.
-8. Normalize Pinokio config home paths to Linux container paths before launching from Windows-hosted workspaces.
-9. Keep Pinokio runtime data on Docker volumes (for example `/pinokio-data`) instead of Windows bind mounts when conda/bootstrap is slow or stuck.
-10. Keep `openClaw/run.bat` and `openClaw/pinokio-host.bat` compatible with unattended startup (`auto`, `--wait-pinokio`, `--wait-ready`, `--no-pause`).
-11. Keep `openClaw/run.bat` no-arg default equivalent to `auto --wait-pinokio 240` and preserve `--manual` for interactive use.
-12. For Camoufox browser workflows, enforce profile/state through:
+5. Keep a persistent sandbox Git identity config at `openClaw/config/gitconfig` and map it as global Git config in container so Telegram/agent `git commit` works unattended.
+6. Ensure `openClaw/config/openclaw.json` exists with local Control UI token auth enabled for localhost workflows.
+7. For Telegram quick-start, default DM auth should allow local testing (`allowFrom=["*"]`, `dmPolicy=allowlist`).
+8. For Pinokio host workflows, use `openClaw/pinokio-host.bat` so lifecycle and readiness checks are repeatable.
+9. Normalize Pinokio config home paths to Linux container paths before launching from Windows-hosted workspaces.
+10. Keep Pinokio runtime data on Docker volumes (for example `/pinokio-data`) instead of Windows bind mounts when conda/bootstrap is slow or stuck.
+11. Keep `openClaw/run.bat` and `openClaw/pinokio-host.bat` compatible with unattended startup (`auto`, `--wait-pinokio`, `--wait-ready`, `--no-pause`).
+12. Keep `openClaw/run.bat` no-arg default equivalent to `auto --wait-pinokio 240` and preserve `--manual` for interactive use.
+13. For Camoufox browser workflows, enforce profile/state through:
     - Windows: `<repo_root>\openClaw\workspace\pinokio-data\api\camoufox-mgt`
     - Linux: `<repo_root>/openClaw/workspace/pinokio-data/api/camoufox-mgt`
-13. Use `skills/camoufox-mgt-enforcer/SKILL.md` for agent instructions that require Camoufox-only browser automation.
+14. Use `skills/camoufox-mgt-enforcer/SKILL.md` for agent instructions that require Camoufox-only browser automation.
 
 ## Zero Claw Starter Defaults
 

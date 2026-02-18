@@ -8,6 +8,7 @@ if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "ENV_FILE=%SCRIPT_DIR%\.env"
 set "COMPOSE_FILE=%SCRIPT_DIR%\docker-compose.yml"
 set "CONFIG_DIR=%SCRIPT_DIR%\config"
+set "GITCONFIG_FILE=%CONFIG_DIR%\gitconfig"
 set "WORKSPACE_DIR=%SCRIPT_DIR%\workspace"
 set "OPENCLAW_CONFIG_FILE=%CONFIG_DIR%\openclaw.json"
 set "OPENCLAW_GATEWAY_TOKEN_VALUE="
@@ -100,6 +101,14 @@ if not exist "%COMPOSE_FILE%" (
 
 if not exist "%CONFIG_DIR%" mkdir "%CONFIG_DIR%"
 if not exist "%WORKSPACE_DIR%" mkdir "%WORKSPACE_DIR%"
+if not exist "%GITCONFIG_FILE%" (
+    echo [*] Creating %GITCONFIG_FILE% with default local Git author...
+    (
+        echo [user]
+        echo     name = OpenClaw Local Agent
+        echo     email = openclaw-local@localhost
+    ) > "%GITCONFIG_FILE%"
+)
 
 if not exist "%OPENCLAW_CONFIG_FILE%" (
     echo [*] Creating %OPENCLAW_CONFIG_FILE% for local Control UI auth...
@@ -150,6 +159,7 @@ if %errorLevel% neq 0 (
 echo.
 echo [*] Container status:
 docker compose --env-file .env ps
+call :ensure_git_identity
 
 for /f "usebackq tokens=1,* delims==" %%A in ("%ENV_FILE%") do (
     if /I "%%A"=="OPENCLAW_GATEWAY_TOKEN" set "OPENCLAW_GATEWAY_TOKEN_VALUE=%%B"
@@ -198,6 +208,16 @@ if !WAITED! equ 0 echo [*] Waiting for Docker daemon to be ready...
 powershell -NoProfile -Command "Start-Sleep -Seconds 3" >nul 2>&1
 set /a WAITED+=3
 goto wait_for_docker_loop
+
+:ensure_git_identity
+docker exec openclaw sh -lc "git config --global user.name >/dev/null 2>&1 || git config --global user.name 'OpenClaw Local Agent'; git config --global user.email >/dev/null 2>&1 || git config --global user.email 'openclaw-local@localhost'" >nul 2>&1
+if %errorLevel% neq 0 (
+    echo WARNING: Could not verify Git identity inside openclaw container.
+    echo Telegram git commits may fail until container git config is available.
+) else (
+    echo [OK] Git identity is configured for sandbox commits.
+)
+exit /b 0
 
 :maybe_pause
 if "%PAUSE_ON_EXIT%"=="1" pause

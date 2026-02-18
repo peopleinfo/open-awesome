@@ -14,6 +14,7 @@ if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 set "ENV_FILE=%SCRIPT_DIR%\.env"
 set "COMPOSE_FILE=%SCRIPT_DIR%\docker-compose.yml"
 set "CONFIG_FILE=%SCRIPT_DIR%\config\openclaw.json"
+set "GITCONFIG_FILE=%SCRIPT_DIR%\config\gitconfig"
 set "DEFAULT_OPENCLAW_IMAGE=ghcr.io/openclaw/openclaw:latest"
 
 REM Check if running as Administrator
@@ -66,6 +67,17 @@ if not exist "%USERPROFILE%\.openclaw" mkdir "%USERPROFILE%\.openclaw"
 if not exist "%USERPROFILE%\.openclaw\workspace" mkdir "%USERPROFILE%\.openclaw\workspace"
 if not exist "%SCRIPT_DIR%\config" mkdir "%SCRIPT_DIR%\config"
 if not exist "%SCRIPT_DIR%\workspace" mkdir "%SCRIPT_DIR%\workspace"
+if not exist "%GITCONFIG_FILE%" (
+    echo [*] Creating gitconfig with default local Git author...
+    (
+        echo [user]
+        echo     name = OpenClaw Local Agent
+        echo     email = openclaw-local@localhost
+    ) > "%GITCONFIG_FILE%"
+    echo [OK] gitconfig created
+) else (
+    echo [*] Existing gitconfig found. Keeping current values.
+)
 echo [OK] Directories created
 echo.
 
@@ -254,11 +266,14 @@ exit /b 0
     echo       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
     echo       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
     echo       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+    echo       - GIT_CONFIG_GLOBAL=/home/node/.openclaw/gitconfig
     echo     ports:
     echo       - "${OPENCLAW_HOST_BIND}:${OPENCLAW_GATEWAY_PORT}:${OPENCLAW_GATEWAY_PORT}"
     echo       - "${OPENCLAW_HOST_BIND}:42000:42000"
     echo       - "${OPENCLAW_HOST_BIND}:30110:30110"
     echo       - "${OPENCLAW_HOST_BIND}:30001:30001"
+    echo       - "${OPENCLAW_HOST_BIND}:5173:5173"
+    echo       - "${OPENCLAW_HOST_BIND}:5174:5174"
     echo     volumes:
     echo       - ./config:/home/node/.openclaw
     echo       - ./workspace:/home/node/.openclaw/workspace

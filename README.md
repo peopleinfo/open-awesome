@@ -71,6 +71,7 @@ Or run interactive menu (Git Bash/WSL shell):
 - `pinokio-host.bat` also supports `--wait-ready SECONDS` and `--no-pause` for unattended startup.
 - `run.bat` supports `auto`, `--manual`, `--start-pinokio`, `--wait-pinokio SECONDS`, and `--no-pause`.
 - `run.bat` no-arg default is equivalent to unattended startup with Pinokio wait (`auto --wait-pinokio 240`).
+- Sandbox Git identity defaults are stored in `openClaw/config/gitconfig` and mounted as global Git config in the container so Telegram/agent `git commit` works unattended.
 - Pinokio first launch may take 30-90 seconds and can restart once while initializing/migrating home data.
 - Pinokio runtime home defaults to Docker volume `pinokio_data` mounted at `/pinokio-data` to avoid Windows bind-mount stalls during conda setup.
 - Telegram bot tokens are stored only in `openClaw/config/openclaw.json` (gitignored).
