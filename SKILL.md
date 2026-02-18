@@ -34,7 +34,7 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 9. Normalize Pinokio config home paths to Linux container paths before launching from Windows-hosted workspaces.
 10. Keep Pinokio runtime data on Docker volumes (for example `/pinokio-data`) instead of Windows bind mounts when conda/bootstrap is slow or stuck.
 11. Keep `openClaw/run.bat` and `openClaw/pinokio-host.bat` compatible with unattended startup (`auto`, `--wait-pinokio`, `--wait-ready`, `--no-pause`).
-12. Keep `openClaw/run.bat` no-arg default equivalent to `auto --wait-pinokio 240` and preserve `--manual` for interactive use.
+12. Keep `openClaw/run.bat` no-arg default equivalent to `auto` (no Pinokio readiness wait) and preserve `--manual` for interactive use.
 13. For Camoufox browser workflows, enforce profile/state through:
     - Windows: `<repo_root>\openClaw\workspace\pinokio-data\api\camoufox-mgt`
     - Linux: `<repo_root>/openClaw/workspace/pinokio-data/api/camoufox-mgt`
@@ -66,5 +66,5 @@ description: Bootstrap and maintain this repository for programming, AI, agent, 
 5. For Codex OAuth helper changes, validate quick probe behavior and verify recovery messaging for refresh-token failures.
 6. For Codex OAuth helper changes, validate account switch flow (`--re-auth`) imports the newly selected host account.
 7. For Pinokio host helper changes, validate `start`, `status`, and host URL reachability on `http://localhost:42000`.
-8. For startup automation changes, validate `openClaw\run.bat auto --wait-pinokio 240` can run without interactive prompts.
+8. For startup automation changes, validate `openClaw\run.bat auto` can run without interactive prompts. Use `--wait-pinokio` only when readiness wait is explicitly required.
 9. For Zero Claw changes, validate `zero-claw` startup scripts run, `GET /health` returns success, setup endpoints respond (including Codex-default checks), and Agent module endpoints return structured status.

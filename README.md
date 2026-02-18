@@ -30,7 +30,7 @@ Bootstrap workspace for building and operating programming, AI, agent, and LLM t
 2. Run `openClaw\setup-sandbox.bat`.
 3. Confirm services with `docker compose -f openClaw\docker-compose.yml ps`.
 4. For normal start after setup, run `openClaw\run.bat`.
-   Default behavior is unattended startup with Pinokio readiness wait (`auto --wait-pinokio 240`).
+   Default behavior is unattended startup with no Pinokio readiness wait (`auto`).
    For manual/interactive mode, run `openClaw\run.bat --manual`.
 5. Open the `Dashboard with token` URL printed by `run.bat`.
 6. If upgrading from an older setup, run `openClaw\setup-sandbox.bat` once to migrate compose mounts and gateway config.
@@ -70,7 +70,7 @@ Or run interactive menu (Git Bash/WSL shell):
 - `pinokio-host.bat` supports `start`, `stop`, `status`, and `logs`.
 - `pinokio-host.bat` also supports `--wait-ready SECONDS` and `--no-pause` for unattended startup.
 - `run.bat` supports `auto`, `--manual`, `--start-pinokio`, `--wait-pinokio SECONDS`, and `--no-pause`.
-- `run.bat` no-arg default is equivalent to unattended startup with Pinokio wait (`auto --wait-pinokio 240`).
+- `run.bat` no-arg default is equivalent to unattended startup with no Pinokio readiness wait (`auto`).
 - Sandbox Git identity defaults are stored in `openClaw/config/gitconfig` and mounted as global Git config in the container so Telegram/agent `git commit` works unattended.
 - Pinokio first launch may take 30-90 seconds and can restart once while initializing/migrating home data.
 - Pinokio runtime home defaults to Docker volume `pinokio_data` mounted at `/pinokio-data` to avoid Windows bind-mount stalls during conda setup.
@@ -122,5 +122,5 @@ Container path for Pinokio runtime data is fixed and user-independent:
 Use Windows Task Scheduler to run OpenClaw and Pinokio at login/startup with no prompt windows:
 
 - Program/script: `<repo_root>\openClaw\run.bat`
-- Arguments: optional, default no-arg already runs `auto --wait-pinokio 240`
+- Arguments: optional, default no-arg already runs `auto` (no Pinokio readiness wait)
 - Start in: `<repo_root>\openClaw`

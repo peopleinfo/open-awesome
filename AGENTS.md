@@ -34,7 +34,7 @@ Expected outcomes:
 6. Pull and start OpenClaw in detached mode.
 7. Keep localhost-only forwards for gateway and local workspace/API service ports (`18789`, `42000`, `30001->30001`, `30110->30110`).
 8. Keep `openClaw/run.bat` usable in unattended startup mode (`auto`) with no interactive prompt requirement.
-9. Keep `openClaw/run.bat` no-arg default aligned with unattended startup (`auto --wait-pinokio 240`) and keep `--manual` as explicit opt-out.
+9. Keep `openClaw/run.bat` no-arg default aligned with unattended startup (`auto`, no Pinokio readiness wait) and keep `--manual` as explicit opt-out.
 10. Ensure sandbox Git commits work from agent/Telegram flows by providing a persistent local Git identity config.
 
 ## Optional Channel Task

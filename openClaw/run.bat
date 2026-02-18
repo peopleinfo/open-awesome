@@ -16,7 +16,7 @@ set "OPENCLAW_GATEWAY_TOKEN_VALUE="
 set "AUTO_MODE=1"
 set "PAUSE_ON_EXIT=0"
 set "START_PINOKIO=1"
-set "WAIT_PINOKIO_SECONDS=240"
+set "WAIT_PINOKIO_SECONDS=0"
 set "EXIT_CODE=0"
 
 :parse_args
@@ -69,6 +69,12 @@ if "%~1"=="" (
     goto usage
 )
 set "WAIT_PINOKIO_SECONDS=%~1"
+echo(!WAIT_PINOKIO_SECONDS!| findstr /r /c:"^[0-9][0-9]*$" >nul
+if errorlevel 1 (
+    echo ERROR: --wait-pinokio must be a non-negative integer.
+    set "USAGE_EXIT_CODE=1"
+    goto usage
+)
 shift
 goto parse_args
 
@@ -169,7 +175,11 @@ popd
 if "%START_PINOKIO%"=="1" (
     echo.
     echo [*] Auto-starting Pinokio web service...
-    call "%SCRIPT_DIR%\pinokio-host.bat" start --no-pause --wait-ready !WAIT_PINOKIO_SECONDS!
+    if !WAIT_PINOKIO_SECONDS! GTR 0 (
+        call "%SCRIPT_DIR%\pinokio-host.bat" start --no-pause --wait-ready !WAIT_PINOKIO_SECONDS!
+    ) else (
+        call "%SCRIPT_DIR%\pinokio-host.bat" start --no-pause
+    )
     if errorlevel 1 (
         echo WARNING: Pinokio did not become ready on http://localhost:42000
         echo Check logs: openClaw\pinokio-host.bat logs
@@ -229,10 +239,10 @@ echo Usage:
 echo   openClaw\run.bat [auto^|--auto^|--manual] [--start-pinokio] [--wait-pinokio SECONDS] [--no-pause]
 echo.
 echo Examples:
-echo   openClaw\run.bat    ^(default: auto --wait-pinokio 240^)
+echo   openClaw\run.bat    ^(default: auto, no Pinokio readiness wait^)
 echo   openClaw\run.bat --manual
 echo   openClaw\run.bat auto --wait-pinokio 240
 echo.
 if "%USAGE_EXIT_CODE%"=="0" exit /b 0
-call :maybe_pause
+if "%PAUSE_ON_EXIT%"=="1" pause
 exit /b %USAGE_EXIT_CODE%
